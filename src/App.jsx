@@ -2,10 +2,10 @@
 import React, { useState } from 'react';
 import './App.scss';
 
+import cn from 'classnames';
 import usersFromServer from './api/users';
 import categoriesFromServer from './api/categories';
 import productsFromServer from './api/products';
-import cn from 'classnames';
 
 const productsReceivedFromServer = [...productsFromServer].map(product => {
   const category = categoriesFromServer.find(
@@ -70,6 +70,7 @@ export const App = () => {
   const handleResetButton = () => {
     setInputValue('');
     setUserFilter('');
+    setSelectedCategories([]);
   };
 
   const handleCategorySelect = value => {
@@ -118,17 +119,6 @@ export const App = () => {
                   {name}
                 </a>
               ))}
-              {/* <a data-cy="FilterUser" href="#/">
-              User 1
-            </a>
-
-            <a data-cy="FilterUser" href="#/" className="is-active">
-              User 2
-            </a>
-
-            <a data-cy="FilterUser" href="#/">
-              User 3
-            </a> */}
             </p>
 
             <div className="panel-block">
@@ -168,7 +158,6 @@ export const App = () => {
                   'is-outlined': selectedCategories.length !== 0,
                 })}
                 onClick={() => handleCategorySelect('')}
-                // className="button is-success mr-6 is-outlined"
               >
                 All
               </a>
@@ -179,7 +168,6 @@ export const App = () => {
                   className={cn('button', 'mr-2', 'mr-1', {
                     'is-info': selectedCategories.includes(id),
                   })}
-                  // className="button mr-2 my-1 is-info"
                   href="#/"
                   key={id}
                   onClick={() => handleCategorySelect(id)}
@@ -187,21 +175,6 @@ export const App = () => {
                   {title}
                 </a>
               ))}
-
-              {/* <a data-cy="Category" className="button mr-2 my-1" href="#/">
-                Category 2
-              </a>
-
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1 is-info"
-                href="#/"
-              >
-                Category 3
-              </a>
-              <a data-cy="Category" className="button mr-2 my-1" href="#/">
-                Category 4
-              </a> */}
             </div>
 
             <div className="panel-block">
@@ -298,32 +271,6 @@ export const App = () => {
                     </td>
                   </tr>
                 ))}
-
-                {/* <tr data-cy="Product">
-              <td className="has-text-weight-bold" data-cy="ProductId">
-                2
-              </td>
-
-              <td data-cy="ProductName">Bread</td>
-              <td data-cy="ProductCategory">🍞 - Grocery</td>
-
-              <td data-cy="ProductUser" className="has-text-danger">
-                Anna
-              </td>
-            </tr>
-
-            <tr data-cy="Product">
-              <td className="has-text-weight-bold" data-cy="ProductId">
-                3
-              </td>
-
-              <td data-cy="ProductName">iPhone</td>
-              <td data-cy="ProductCategory">💻 - Electronics</td>
-
-              <td data-cy="ProductUser" className="has-text-link">
-                Roma
-              </td>
-            </tr> */}
               </tbody>
             </table>
           )}
