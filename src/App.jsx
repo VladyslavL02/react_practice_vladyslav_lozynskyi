@@ -7,6 +7,8 @@ import usersFromServer from './api/users';
 import categoriesFromServer from './api/categories';
 import productsFromServer from './api/products';
 import { PanelTabs } from './components/PanelTabs/PanelTabs';
+import { Product } from './components/Product/Product';
+import { Category } from './components/Category/Category';
 
 const productsReceivedFromServer = [...productsFromServer].map(product => {
   const category = categoriesFromServer.find(
@@ -196,17 +198,13 @@ export const App = () => {
               </a>
 
               {categories.map(({ title, id }) => (
-                <a
-                  data-cy="Category"
-                  className={cn('button', 'mr-2', 'mr-1', {
-                    'is-info': selectedCategories.includes(id),
-                  })}
-                  href="#/"
+                <Category
                   key={id}
-                  onClick={() => handleCategorySelect(id)}
-                >
-                  {title}
-                </a>
+                  selected={selectedCategories}
+                  id={id}
+                  title={title}
+                  handleSelect={handleCategorySelect}
+                />
               ))}
             </div>
 
@@ -329,25 +327,13 @@ export const App = () => {
 
               <tbody>
                 {products.map(({ id, name, category, user }) => (
-                  <tr data-cy="Product" key={id}>
-                    <td className="has-text-weight-bold" data-cy="ProductId">
-                      {id}
-                    </td>
-
-                    <td data-cy="ProductName">{name}</td>
-                    <td data-cy="ProductCategory">
-                      {category.icon} - {category.title}
-                    </td>
-
-                    <td
-                      data-cy="ProductUser"
-                      className={
-                        user.sex === 'm' ? 'has-text-link' : 'has-text-danger'
-                      }
-                    >
-                      {user.name}
-                    </td>
-                  </tr>
+                  <Product
+                    key={id}
+                    id={id}
+                    name={name}
+                    category={category}
+                    user={user}
+                  />
                 ))}
               </tbody>
             </table>
