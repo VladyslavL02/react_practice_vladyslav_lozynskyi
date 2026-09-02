@@ -5,6 +5,7 @@ import './App.scss';
 import usersFromServer from './api/users';
 import categoriesFromServer from './api/categories';
 import productsFromServer from './api/products';
+import cn from 'classnames';
 
 const productsReceivedFromServer = [...productsFromServer].map(product => {
   const category = categoriesFromServer.find(
@@ -18,8 +19,12 @@ const productsReceivedFromServer = [...productsFromServer].map(product => {
 });
 
 const users = [...usersFromServer];
+const categories = [...categoriesFromServer];
 
-function preparedProducts(products, { userFilter, inputValue }) {
+function preparedProducts(
+  products,
+  { userFilter, inputValue, selectedCategories },
+) {
   let finalProducts = [...products];
 
   if (userFilter !== '') {
@@ -34,16 +39,24 @@ function preparedProducts(products, { userFilter, inputValue }) {
     });
   }
 
+  if (selectedCategories.length) {
+    finalProducts = finalProducts.filter(({ category }) => {
+      return selectedCategories.includes(category.id);
+    });
+  }
+
   return finalProducts;
 }
 
 export const App = () => {
   const [userFilter, setUserFilter] = useState('');
   const [inputValue, setInputValue] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   const products = preparedProducts(productsReceivedFromServer, {
     userFilter,
     inputValue,
+    selectedCategories,
   });
 
   const handleUserSelect = userId => {
@@ -57,6 +70,22 @@ export const App = () => {
   const handleResetButton = () => {
     setInputValue('');
     setUserFilter('');
+  };
+
+  const handleCategorySelect = value => {
+    if (!value) {
+      setSelectedCategories([]);
+    } else if (selectedCategories.includes(value)) {
+      setSelectedCategories(selectedCategories.filter(id => id !== value));
+    } else if (
+      !selectedCategories.find(categorySelected => categorySelected === value)
+    ) {
+      const categoriesThatAreSelected = [...selectedCategories];
+
+      categoriesThatAreSelected.push(value);
+
+      setSelectedCategories(categoriesThatAreSelected);
+    }
   };
 
   return (
@@ -135,20 +164,31 @@ export const App = () => {
               <a
                 href="#/"
                 data-cy="AllCategories"
-                className="button is-success mr-6 is-outlined"
+                className={cn('button', 'is-success', 'mr-6', {
+                  'is-outlined': selectedCategories.length !== 0,
+                })}
+                onClick={() => handleCategorySelect('')}
+                // className="button is-success mr-6 is-outlined"
               >
                 All
               </a>
 
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1 is-info"
-                href="#/"
-              >
-                Category 1
-              </a>
+              {categories.map(({ title, id }) => (
+                <a
+                  data-cy="Category"
+                  className={cn('button', 'mr-2', 'mr-1', {
+                    'is-info': selectedCategories.includes(id),
+                  })}
+                  // className="button mr-2 my-1 is-info"
+                  href="#/"
+                  key={id}
+                  onClick={() => handleCategorySelect(id)}
+                >
+                  {title}
+                </a>
+              ))}
 
-              <a data-cy="Category" className="button mr-2 my-1" href="#/">
+              {/* <a data-cy="Category" className="button mr-2 my-1" href="#/">
                 Category 2
               </a>
 
@@ -161,7 +201,7 @@ export const App = () => {
               </a>
               <a data-cy="Category" className="button mr-2 my-1" href="#/">
                 Category 4
-              </a>
+              </a> */}
             </div>
 
             <div className="panel-block">
