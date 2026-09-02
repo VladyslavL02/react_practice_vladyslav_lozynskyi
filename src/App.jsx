@@ -19,11 +19,19 @@ const productsReceivedFromServer = [...productsFromServer].map(product => {
 
 const users = [...usersFromServer];
 
-function preparedProducts(products, { userFilter }) {
+function preparedProducts(products, { userFilter, inputValue }) {
   let finalProducts = [...products];
 
   if (userFilter !== '') {
     finalProducts = finalProducts.filter(({ user }) => user.id === userFilter);
+  }
+
+  if (inputValue !== '') {
+    const normalizedInputValue = inputValue.trim().toLowerCase();
+
+    finalProducts = finalProducts.filter(({ name }) =>
+      name.toLowerCase().includes(normalizedInputValue),
+    );
   }
 
   return finalProducts;
@@ -31,11 +39,19 @@ function preparedProducts(products, { userFilter }) {
 
 export const App = () => {
   const [userFilter, setUserFilter] = useState('');
+  const [inputValue, setInputValue] = useState('');
 
-  const products = preparedProducts(productsReceivedFromServer, { userFilter });
+  const products = preparedProducts(productsReceivedFromServer, {
+    userFilter,
+    inputValue,
+  });
 
   const handleUserSelect = userId => {
     setUserFilter(userId);
+  };
+
+  const handleInputChange = value => {
+    setInputValue(value);
   };
 
   return (
@@ -88,7 +104,8 @@ export const App = () => {
                   type="text"
                   className="input"
                   placeholder="Search"
-                  value="qwe"
+                  value={inputValue}
+                  onChange={event => handleInputChange(event.target.value)}
                 />
 
                 <span className="icon is-left">
@@ -97,11 +114,14 @@ export const App = () => {
 
                 <span className="icon is-right">
                   {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                  <button
-                    data-cy="ClearButton"
-                    type="button"
-                    className="delete"
-                  />
+                  {inputValue !== '' && (
+                    <button
+                      data-cy="ClearButton"
+                      type="button"
+                      className="delete"
+                      onClick={() => handleInputChange('')}
+                    />
+                  )}
                 </span>
               </p>
             </div>
