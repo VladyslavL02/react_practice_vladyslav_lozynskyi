@@ -23,7 +23,7 @@ const categories = [...categoriesFromServer];
 
 function preparedProducts(
   products,
-  { userFilter, inputValue, selectedCategories },
+  { userFilter, inputValue, selectedCategories, sortProducts },
 ) {
   let finalProducts = [...products];
 
@@ -45,6 +45,41 @@ function preparedProducts(
     });
   }
 
+  if (sortProducts !== '') {
+    switch (sortProducts[0]) {
+      case 'id':
+        finalProducts.sort((product1, product2) => {
+          return product1.id - product2.id;
+        });
+        break;
+
+      case 'product':
+        finalProducts.sort((product1, product2) => {
+          return product1.name.localeCompare(product2.name);
+        });
+        break;
+
+      case 'category':
+        finalProducts.sort((product1, product2) => {
+          return product1.category.title.localeCompare(product2.category.title);
+        });
+        break;
+
+      case 'user':
+        finalProducts.sort((product1, product2) => {
+          return product1.user.name.localeCompare(product2.user.name);
+        });
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  if (sortProducts[1] === 'desc') {
+    return [...finalProducts].reverse();
+  }
+
   return finalProducts;
 }
 
@@ -52,11 +87,13 @@ export const App = () => {
   const [userFilter, setUserFilter] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [sortProducts, setSortProducts] = useState('');
 
   const products = preparedProducts(productsReceivedFromServer, {
     userFilter,
     inputValue,
     selectedCategories,
+    sortProducts,
   });
 
   const handleUserSelect = userId => {
@@ -86,6 +123,18 @@ export const App = () => {
       categoriesThatAreSelected.push(value);
 
       setSelectedCategories(categoriesThatAreSelected);
+    }
+  };
+
+  const handleSort = value => {
+    if (sortProducts[0] === value) {
+      if (sortProducts[1] === 'asc') {
+        setSortProducts([value, 'desc']);
+      } else {
+        setSortProducts([]);
+      }
+    } else {
+      setSortProducts([value, 'asc']);
     }
   };
 
@@ -206,10 +255,22 @@ export const App = () => {
                   <th>
                     <span className="is-flex is-flex-wrap-nowrap">
                       ID
-                      <a href="#/">
+                      <a href="#/" onClick={() => handleSort('id')}>
                         <span className="icon">
-                          <i data-cy="SortIcon" className="fas fa-sort" />
+                          <i
+                            data-cy="SortIcon"
+                            className={cn('fas', {
+                              'fa-sort': sortProducts[0] !== 'id',
+                              'fa-sort-up':
+                                sortProducts[0] === 'id' &&
+                                sortProducts[1] === 'asc',
+                              'fa-sort-down':
+                                sortProducts[0] === 'id' &&
+                                sortProducts[1] === 'desc',
+                            })}
+                          />
                         </span>
+                        {/* className="fas fa-sort" */}
                       </a>
                     </span>
                   </th>
@@ -217,9 +278,20 @@ export const App = () => {
                   <th>
                     <span className="is-flex is-flex-wrap-nowrap">
                       Product
-                      <a href="#/">
+                      <a href="#/" onClick={() => handleSort('product')}>
                         <span className="icon">
-                          <i data-cy="SortIcon" className="fas fa-sort-down" />
+                          <i
+                            data-cy="SortIcon"
+                            className={cn('fas', {
+                              'fa-sort': sortProducts[0] !== 'product',
+                              'fa-sort-up':
+                                sortProducts[0] === 'product' &&
+                                sortProducts[1] === 'asc',
+                              'fa-sort-down':
+                                sortProducts[0] === 'product' &&
+                                sortProducts[1] === 'desc',
+                            })}
+                          />
                         </span>
                       </a>
                     </span>
@@ -228,9 +300,20 @@ export const App = () => {
                   <th>
                     <span className="is-flex is-flex-wrap-nowrap">
                       Category
-                      <a href="#/">
+                      <a href="#/" onClick={() => handleSort('category')}>
                         <span className="icon">
-                          <i data-cy="SortIcon" className="fas fa-sort-up" />
+                          <i
+                            data-cy="SortIcon"
+                            className={cn('fas', {
+                              'fa-sort': sortProducts[0] !== 'category',
+                              'fa-sort-up':
+                                sortProducts[0] === 'category' &&
+                                sortProducts[1] === 'asc',
+                              'fa-sort-down':
+                                sortProducts[0] === 'category' &&
+                                sortProducts[1] === 'desc',
+                            })}
+                          />
                         </span>
                       </a>
                     </span>
@@ -239,9 +322,20 @@ export const App = () => {
                   <th>
                     <span className="is-flex is-flex-wrap-nowrap">
                       User
-                      <a href="#/">
+                      <a href="#/" onClick={() => handleSort('user')}>
                         <span className="icon">
-                          <i data-cy="SortIcon" className="fas fa-sort" />
+                          <i
+                            data-cy="SortIcon"
+                            className={cn('fas', {
+                              'fa-sort': sortProducts[0] !== 'user',
+                              'fa-sort-up':
+                                sortProducts[0] === 'user' &&
+                                sortProducts[1] === 'asc',
+                              'fa-sort-down':
+                                sortProducts[0] === 'user' &&
+                                sortProducts[1] === 'desc',
+                            })}
+                          />
                         </span>
                       </a>
                     </span>
