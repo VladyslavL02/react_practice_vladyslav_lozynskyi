@@ -152,7 +152,7 @@ export const App = () => {
                 data-cy="FilterAllUsers"
                 href="#/"
                 onClick={() => handleUserSelect('')}
-                className={userFilter === '' && 'is-active'}
+                className={userFilter === '' ? 'is-active' : ''}
               >
                 All
               </a>
@@ -163,7 +163,7 @@ export const App = () => {
                   href="#/"
                   key={id}
                   onClick={() => handleUserSelect(id)}
-                  className={userFilter === id && 'is-active'}
+                  className={userFilter === id ? 'is-active' : ''}
                 >
                   {name}
                 </a>
