@@ -6,6 +6,7 @@ import cn from 'classnames';
 import usersFromServer from './api/users';
 import categoriesFromServer from './api/categories';
 import productsFromServer from './api/products';
+import { PanelTabs } from './components/PanelTabs/PanelTabs';
 
 const productsReceivedFromServer = [...productsFromServer].map(product => {
   const category = categoriesFromServer.find(
@@ -147,28 +148,11 @@ export const App = () => {
           <nav className="panel">
             <p className="panel-heading">Filters</p>
 
-            <p className="panel-tabs has-text-weight-bold">
-              <a
-                data-cy="FilterAllUsers"
-                href="#/"
-                onClick={() => handleUserSelect('')}
-                className={userFilter === '' ? 'is-active' : ''}
-              >
-                All
-              </a>
-
-              {users.map(({ id, name }) => (
-                <a
-                  data-cy="FilterUser"
-                  href="#/"
-                  key={id}
-                  onClick={() => handleUserSelect(id)}
-                  className={userFilter === id ? 'is-active' : ''}
-                >
-                  {name}
-                </a>
-              ))}
-            </p>
+            <PanelTabs
+              users={users}
+              handleSelect={handleUserSelect}
+              filter={userFilter}
+            />
 
             <div className="panel-block">
               <p className="control has-icons-left has-icons-right">
